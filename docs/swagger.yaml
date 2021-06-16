@@ -1,0 +1,128 @@
+definitions:
+  model.LoginRequest:
+    properties:
+      password:
+        type: string
+      username:
+        type: string
+    required:
+    - password
+    - username
+    type: object
+  model.LoginResponse:
+    properties:
+      token:
+        type: string
+      username:
+        type: string
+    type: object
+  model.UserRequest:
+    properties:
+      email:
+        type: string
+      first_name:
+        type: string
+      last_name:
+        type: string
+      password:
+        type: string
+      photo:
+        type: string
+      username:
+        type: string
+    required:
+    - email
+    - first_name
+    - last_name
+    - password
+    - username
+    type: object
+  model.UserResponse:
+    properties:
+      email:
+        type: string
+      first_name:
+        type: string
+      id_user:
+        type: integer
+      last_name:
+        type: string
+      password:
+        type: string
+      photo:
+        type: string
+      role:
+        type: string
+      token:
+        type: string
+      username:
+        type: string
+    type: object
+info:
+  contact: {}
+paths:
+  /login:
+    post:
+      consumes:
+      - application/json
+      description: TODO
+      parameters:
+      - description: body request
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/model.LoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.LoginResponse'
+      summary: Login User
+      tags:
+      - login
+  /registrasi:
+    post:
+      consumes:
+      - application/json
+      description: TODO
+      parameters:
+      - description: body request
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/model.UserRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.UserResponse'
+      summary: Create User
+      tags:
+      - registrasi
+  /verification:
+    post:
+      consumes:
+      - application/json
+      description: TODO
+      parameters:
+      - description: body request
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/model.LoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ""
+      summary: verified verification code
+      tags:
+      - registrasi
+swagger: "2.0"
