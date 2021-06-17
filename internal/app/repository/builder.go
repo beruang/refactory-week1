@@ -29,15 +29,24 @@ func (b *builder) addParam(params string, value interface{}) *builder {
 }
 
 func (b *builder) build() *builder {
-	for k, v := range b.params {
-		if nil == v {
-			b.base = fmt.Sprintf("%s AND %s", b.base, k)
-		} else {
-			b.base = fmt.Sprintf("%s AND %s=%v", b.base, k, v)
+	if len(b.params) > 0 {
+		for k, v := range b.params {
+			if nil == v {
+				b.base = fmt.Sprintf("%s AND %s", b.base, k)
+			} else {
+				b.base = fmt.Sprintf("%s AND %s=%v", b.base, k, v)
+			}
 		}
 	}
+
 	t := strings.SplitAfter(b.base, "WHERE")
-	b.base = fmt.Sprintf("%s %s", t[0], t[1][5:])
+
+	if t[1] != "" {
+		b.base = fmt.Sprintf("%s %s", t[0], t[1][5:])
+	} else {
+		b.base = strings.Replace(b.base, "WHERE", "", -1)
+	}
+
 	return b
 }
 

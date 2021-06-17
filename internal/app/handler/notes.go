@@ -68,7 +68,7 @@ func (n *notesHandler) CreateNotes(c echo.Context) error {
 func (n *notesHandler) ListNotes(c echo.Context) error {
 	session, ok := c.Get("session").(*token.Token)
 	if !ok {
-		web.ResponseError(c, app.InternalError)
+		return web.ResponseError(c, app.InternalError)
 	}
 
 	result, err := n.s.GetNotes(c.Request().Context(), session.UserId, session.RoleId)
@@ -95,7 +95,7 @@ func (n *notesHandler) GetNotes(c echo.Context) error {
 
 	session, ok := c.Get("session").(*token.Token)
 	if !ok {
-		web.ResponseError(c, app.InternalError)
+		return web.ResponseError(c, app.InternalError)
 	}
 
 	result, err := n.s.DetailNotes(c.Request().Context(), session.UserId, id, session.RoleId)
@@ -129,7 +129,7 @@ func (n *notesHandler) EditNotes(c echo.Context) error {
 	}
 	session, ok := c.Get("session").(*token.Token)
 	if !ok {
-		web.ResponseError(c, app.InternalError)
+		return web.ResponseError(c, app.InternalError)
 	}
 
 	response, err := n.s.EditNotes(c.Request().Context(), model.NewNotes(id, session.UserId, req.Type, req.Title, req.Body, req.Secret))
@@ -149,6 +149,10 @@ func (n *notesHandler) EditNotes(c echo.Context) error {
 // @Param id path int true "id notes"
 // @Success 200 {string} result
 func (n *notesHandler) DeleteNotes(c echo.Context) error {
+	var req model.SecretRequest
+	if err := c.Bind(&req); nil != err {
+		return web.ResponseError(c, app.InternalError)
+	}
 	id, err := strconv.Atoi(c.Param("id"))
 	if nil != err {
 		return echo.ErrBadRequest
@@ -159,7 +163,7 @@ func (n *notesHandler) DeleteNotes(c echo.Context) error {
 		web.ResponseError(c, app.InternalError)
 	}
 
-	if err := n.s.DeleteNotes(c.Request().Context(), session.UserId, id); nil != err {
+	if err := n.s.DeleteNotes(c.Request().Context(), session.UserId, id, req.Secret); nil != err {
 		return web.ResponseError(c, err)
 	}
 

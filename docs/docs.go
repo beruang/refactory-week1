@@ -90,6 +90,61 @@ var doc = `{
                 }
             }
         },
+        "/media": {
+            "post": {
+                "description": "TODO",
+                "consumes": [
+                    "image/jpeg"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "media"
+                ],
+                "summary": "upload media",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.MediaResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/media/{id}": {
+            "get": {
+                "description": "TODO",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "image/jpeg"
+                ],
+                "tags": [
+                    "media"
+                ],
+                "summary": "download media",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "id media",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/notes": {
             "get": {
                 "description": "TODO",
@@ -300,6 +355,14 @@ var doc = `{
                 },
                 "username": {
                     "type": "string"
+                }
+            }
+        },
+        "model.MediaResponse": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
                 }
             }
         },

@@ -7,6 +7,7 @@ import (
 	"refactory/notes/internal/app"
 	"refactory/notes/internal/app/model"
 	"refactory/notes/internal/app/repository"
+	"strings"
 )
 
 type NotesService interface {
@@ -14,7 +15,7 @@ type NotesService interface {
 	GetNotes(ctx context.Context, userId int, roleId int) ([]*model.NotesResponse, error)
 	DetailNotes(ctx context.Context, userId int, id int, roleId int) (*model.NotesResponse, error)
 	EditNotes(ctx context.Context, notes *model.Notes) (*model.NotesResponse, error)
-	DeleteNotes(ctx context.Context, userId int, id int) error
+	DeleteNotes(ctx context.Context, userId int, id int, secret string) error
 	ReActiveNotes(ctx context.Context, id int) error
 }
 
@@ -65,6 +66,15 @@ func (n *notesService) DetailNotes(ctx context.Context, userId int, id int, role
 }
 
 func (n *notesService) EditNotes(ctx context.Context, notes *model.Notes) (*model.NotesResponse, error) {
+	s, err := n.repo.GetSecret(ctx, notes.Id)
+	if nil != err {
+		return nil, err
+	}
+
+	if !strings.EqualFold(s, notes.Secret) {
+		return nil, app.UnauthorizedError
+	}
+
 	if err := n.repo.UpdateNotes(ctx, notes); nil != err {
 		return nil, err
 	}
@@ -72,7 +82,16 @@ func (n *notesService) EditNotes(ctx context.Context, notes *model.Notes) (*mode
 	return model.NewNotesResponse(notes.Id, notes.Type, notes.Title, notes.Body, notes.Secret), nil
 }
 
-func (n *notesService) DeleteNotes(ctx context.Context, userId int, id int) error {
+func (n *notesService) DeleteNotes(ctx context.Context, userId int, id int, secret string) error {
+	s, err := n.repo.GetSecret(ctx, id)
+	if nil != err {
+		return nil
+	}
+
+	if !strings.EqualFold(s, secret) {
+		return app.UnauthorizedError
+	}
+
 	return n.repo.DeleteNotes(ctx, userId, id)
 }
 

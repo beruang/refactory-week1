@@ -3,6 +3,7 @@ package repository
 import (
 	"context"
 	"database/sql"
+	"fmt"
 	"github.com/jmoiron/sqlx"
 	"github.com/pkg/errors"
 	"refactory/notes/internal/app"
@@ -13,6 +14,7 @@ type NotesRepository interface {
 	InsertNotes(ctx context.Context, notes *model.Notes) error
 	GetNotes(ctx context.Context, userId int, roleId int) ([]model.Notes, error)
 	DetailNotes(ctx context.Context, userId int, id int, roleId int) (model.Notes, error)
+	GetSecret(ctx context.Context, id int) (string, error)
 	UpdateNotes(ctx context.Context, notes *model.Notes) error
 	DeleteNotes(ctx context.Context, userId int, id int) error
 	ReActiveNotes(ctx context.Context, id int) error
@@ -85,6 +87,9 @@ func (n notesRepository) DetailNotes(ctx context.Context, userId int, id int, ro
 		return result, errors.Wrap(err, "[db] DetailNotes - queries")
 	}
 
+	if nil != rows.Err() || !rows.Next() {
+		return result, app.NotFoundError
+	}
 	for rows.Next() {
 		if err := rows.Scan(&result.Id, &result.Type, &result.Title, &result.Body, &result.Secret); nil != err {
 			return result, errors.Wrap(err, "[db] DetailNotes - scan rows")
@@ -94,13 +99,44 @@ func (n notesRepository) DetailNotes(ctx context.Context, userId int, id int, ro
 	return result, nil
 }
 
+func (n notesRepository) GetSecret(ctx context.Context, id int) (string, error) {
+	var result string
+
+	rows, err := newBuilder(n.db).
+		baseQuery(`SELECT secret FROM notes.notes`).
+		addParam("id", id).
+		build().query(ctx)
+
+	if nil != err {
+		if sql.ErrNoRows == err {
+			return "", app.NotFoundError
+		}
+		return "", app.InternalError
+	}
+
+	if nil != rows.Err() || !rows.Next() {
+		return "", app.NotFoundError
+	}
+
+	if err := rows.Scan(&result); nil != err {
+		return "", errors.Wrap(err, "[db] GetSecret - scan rows")
+	}
+
+	return result, nil
+}
+
 func (n notesRepository) UpdateNotes(ctx context.Context, notes *model.Notes) error {
-	stmt, err := n.db.PrepareContext(ctx, `UPDATE notes.notes SET type=$1, title=$2, body=$3, secret=$4 where id=$5 and user_id=$6`)
+	query := `UPDATE notes.notes SET type=$1, title=$2, body=$3, secret=$4 where id=$5`
+	if roleUser == 0 {
+		query = fmt.Sprintf("%s AND user_id=%d", query, notes.UserId)
+	}
+
+	stmt, err := n.db.PrepareContext(ctx, query)
 	if nil != err {
 		return errors.Wrap(err, "[db] UpdateNotes - prepare statement")
 	}
 
-	rs, err := stmt.ExecContext(ctx, notes.Type, notes.Title, notes.Body, notes.Secret, notes.Id, notes.UserId)
+	rs, err := stmt.ExecContext(ctx, notes.Type, notes.Title, notes.Body, notes.Secret, notes.Id)
 	if nil != err {
 		return errors.Wrap(err, "[db] UpdateNotes - update notes")
 	}
@@ -114,12 +150,16 @@ func (n notesRepository) UpdateNotes(ctx context.Context, notes *model.Notes) er
 }
 
 func (n notesRepository) DeleteNotes(ctx context.Context, userId int, id int) error {
-	stmt, err := n.db.PrepareContext(ctx, `UPDATE notes.notes SET is_active=false where user_id=$1 and id=$2`)
+	query := `UPDATE notes.notes SET is_active=false where id=$1`
+	if roleUser == 0 {
+		query = fmt.Sprintf("%s AND user_id=%d", query, userId)
+	}
+	stmt, err := n.db.PrepareContext(ctx, query)
 	if nil != err {
 		return errors.Wrap(err, "[db] DeleteNotes - prepare statement")
 	}
 
-	rs, err := stmt.ExecContext(ctx, userId, id)
+	rs, err := stmt.ExecContext(ctx, id)
 	if nil != err {
 		return errors.Wrap(err, "[db] DeleteNotes - exec query delete")
 	}

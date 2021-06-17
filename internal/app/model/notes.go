@@ -34,3 +34,7 @@ func NewNotesResponse(id int,
 	types string, title string, body string, secret string) *NotesResponse {
 	return &NotesResponse{Id: id, Type: types, Title: title, Body: body, Secret: secret}
 }
+
+type SecretRequest struct {
+	Secret string `json:"secret"`
+}

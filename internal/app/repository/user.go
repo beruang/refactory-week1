@@ -122,12 +122,6 @@ func (u *userRepository) FindSession(ctx context.Context, username string) (mode
 
 func (u *userRepository) FindUser(ctx context.Context, username string) (*model.User, error) {
 	var result model.User
-	if err := u.cache.Cache().Get(ctx, fmt.Sprintf("find:user:%s", username), &result); nil != err && cache.ErrCacheMiss != err {
-		return nil, err
-	} else if nil == err && result.Id != 0 {
-		return &result, nil
-	}
-
 	stmt, err := u.db.PrepareContext(ctx, `SELECT id, first_name, last_name, email, password, username, is_verified, role_id, is_active from notes."user" where username=$1 and is_active`)
 	if nil != err {
 		return nil, errors.Wrap(err, "[db] FindUser - prepared statement")
