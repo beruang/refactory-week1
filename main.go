@@ -2,11 +2,11 @@ package main
 
 import (
 	"github.com/prometheus/common/log"
-	"refactory/notes/internal/server"
+	"refactory/notes/cmd"
 )
 
 func main() {
-	if err := server.Start(); nil != err {
+	if err := cmd.Start(); nil != err {
 		log.Fatal(err)
 	}
 }
