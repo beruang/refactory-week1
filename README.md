@@ -46,3 +46,8 @@ mail_user=
 mail_password=
 is_dev=true
 ```
+
+## Contacts
+If you have any issue or feature request, please contact me. PR are welcome
+- [https://github.com/beruang](https://github.com/beruang)
+- [zackymughnii@gmail.com](zackymughnii@gmail.com)
