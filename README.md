@@ -14,6 +14,7 @@ Notes API is backend application created for Refactory.id RSP recruitment test.
 |[Swaggo](https://github.com/swaggo/swag)|API Documentation library provide swagger|
 |[GoMail](https://gopkg.in/gomail.v2)|library for sending email|
 |[GoValidator](github.com/go-playground/validator)|Additional library for validating request|
+|[CLI](https://github.com/urfave/cli)|Command line library|
 
 ## Feature
 - Sending email verification with queue system
@@ -25,6 +26,15 @@ Notes API is backend application created for Refactory.id RSP recruitment test.
 ```
 {{host}}/api/swagger/index.html
 ```
+## Commands
+|CMD|Description|
+|---|-----------|
+|migrations|running application migration|
+|rollback|rollback database migration|
+|steps|migrate look at the currently active migration version|
+|drop|drop everything in the database|
+|start|start application|
+|launch|launch migration and start application|
 ## Environment
 ```
 web_address=
