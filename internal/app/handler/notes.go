@@ -27,6 +27,14 @@ func NewNotesHandler(s service.NotesService) *notesHandler {
 	return &notesHandler{s: s}
 }
 
+// @Router /notes [post]
+// @Tags notes
+// @Summary Create Notes
+// @Description TODO
+// @Accept json
+// @Produce json
+// @Param payload body model.NotesRequest true "body request"
+// @Success 200 {object} model.NotesResponse
 func (n *notesHandler) CreateNotes(c echo.Context) error {
 	var req model.NotesRequest
 	if err := c.Bind(&req); nil != err {
@@ -50,6 +58,13 @@ func (n *notesHandler) CreateNotes(c echo.Context) error {
 	return web.Response(c, response)
 }
 
+// @Router /notes [get]
+// @Tags notes
+// @Summary Get List Notes
+// @Description TODO
+// @Accept json
+// @Produce json
+// @Success 200 {array} model.NotesResponse
 func (n *notesHandler) ListNotes(c echo.Context) error {
 	session, ok := c.Get("session").(*token.Token)
 	if !ok {
@@ -64,6 +79,14 @@ func (n *notesHandler) ListNotes(c echo.Context) error {
 	return web.Response(c, result)
 }
 
+// @Router /notes/{id} [get]
+// @Tags notes
+// @Summary Get Notes Detail
+// @Description TODO
+// @Accept json
+// @Produce json
+// @Param id path int true "id notes"
+// @Success 200 {object} model.NotesResponse
 func (n *notesHandler) GetNotes(c echo.Context) error {
 	id, err := strconv.Atoi(c.Param("id"))
 	if nil != err {
@@ -83,6 +106,14 @@ func (n *notesHandler) GetNotes(c echo.Context) error {
 	return web.Response(c, result)
 }
 
+// @Router /notes/{id} [put]
+// @Tags notes
+// @Summary Update Notes
+// @Description TODO
+// @Accept json
+// @Produce json
+// @Param id path int true "id notes"
+// @Success 200 {object} model.NotesResponse
 func (n *notesHandler) EditNotes(c echo.Context) error {
 	var req model.NotesRequest
 
@@ -109,6 +140,14 @@ func (n *notesHandler) EditNotes(c echo.Context) error {
 	return web.Response(c, response)
 }
 
+// @Router /notes/{id} [del]
+// @Tags notes
+// @Summary Update Notes
+// @Description TODO
+// @Accept json
+// @Produce json
+// @Param id path int true "id notes"
+// @Success 200 {string} result
 func (n *notesHandler) DeleteNotes(c echo.Context) error {
 	id, err := strconv.Atoi(c.Param("id"))
 	if nil != err {
@@ -127,6 +166,14 @@ func (n *notesHandler) DeleteNotes(c echo.Context) error {
 	return web.Response(c, "Note has deleted")
 }
 
+// @Router /admin/notes/{id} [put]
+// @Tags admin
+// @Summary ReActive Notes
+// @Description TODO
+// @Accept json
+// @Produce json
+// @Param id path int true "id notes"
+// @Success 200 {string} result
 func (n *notesHandler) ReActiveNotes(c echo.Context) error {
 	id, err := strconv.Atoi(c.Param("id"))
 	if nil != err {

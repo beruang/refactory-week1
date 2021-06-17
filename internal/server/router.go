@@ -41,7 +41,6 @@ func NewRouter(validate *validator.Validate, db *sqlx.DB, cache redis.Client, en
 	notes.GET("/:id", module.notes.GetNotes)
 	notes.PUT("/:id", module.notes.EditNotes)
 	notes.DELETE("/:id", module.notes.DeleteNotes)
-	//notes.PUT("/reactive/:id", module.notes.ReActiveNotes)
 
 	admin := api.Group("/admin", middleware.Claim(), middleware.Auth, authenticationMiddleware.Enforce())
 	admin.PUT("/notes/:id", module.notes.ReActiveNotes)

@@ -16,6 +16,34 @@ definitions:
       username:
         type: string
     type: object
+  model.NotesRequest:
+    properties:
+      body:
+        type: string
+      secret:
+        type: string
+      title:
+        type: string
+      type:
+        type: string
+    required:
+    - body
+    - title
+    - type
+    type: object
+  model.NotesResponse:
+    properties:
+      body:
+        type: string
+      id:
+        type: integer
+      secret:
+        type: string
+      title:
+        type: string
+      type:
+        type: string
+    type: object
   model.UserRequest:
     properties:
       email:
@@ -61,6 +89,27 @@ definitions:
 info:
   contact: {}
 paths:
+  /admin/notes/{id}:
+    put:
+      consumes:
+      - application/json
+      description: TODO
+      parameters:
+      - description: id notes
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      summary: ReActive Notes
+      tags:
+      - admin
   /login:
     post:
       consumes:
@@ -83,6 +132,85 @@ paths:
       summary: Login User
       tags:
       - login
+  /notes:
+    get:
+      consumes:
+      - application/json
+      description: TODO
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.NotesResponse'
+            type: array
+      summary: Get List Notes
+      tags:
+      - notes
+    post:
+      consumes:
+      - application/json
+      description: TODO
+      parameters:
+      - description: body request
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/model.NotesRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.NotesResponse'
+      summary: Create Notes
+      tags:
+      - notes
+  /notes/{id}:
+    get:
+      consumes:
+      - application/json
+      description: TODO
+      parameters:
+      - description: id notes
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.NotesResponse'
+      summary: Get Notes Detail
+      tags:
+      - notes
+    put:
+      consumes:
+      - application/json
+      description: TODO
+      parameters:
+      - description: id notes
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.NotesResponse'
+      summary: Update Notes
+      tags:
+      - notes
   /registrasi:
     post:
       consumes:

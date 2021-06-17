@@ -2,7 +2,6 @@ package handler
 
 import (
 	"github.com/labstack/echo/v4"
-	"net/http"
 	"refactory/notes/internal/app"
 	"refactory/notes/internal/app/model"
 	"refactory/notes/internal/app/service"
@@ -48,7 +47,7 @@ func (u *userHandler) CreateUser(c echo.Context) error {
 		return web.ResponseError(c, err)
 	}
 
-	return c.JSON(http.StatusOK, result)
+	return web.Response(c, result)
 }
 
 // @Router /verification [post]

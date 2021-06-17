@@ -24,6 +24,38 @@ var doc = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/admin/notes/{id}": {
+            "put": {
+                "description": "TODO",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admin"
+                ],
+                "summary": "ReActive Notes",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "id notes",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/login": {
             "post": {
                 "description": "TODO",
@@ -58,6 +90,126 @@ var doc = `{
                 }
             }
         },
+        "/notes": {
+            "get": {
+                "description": "TODO",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "notes"
+                ],
+                "summary": "Get List Notes",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.NotesResponse"
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "TODO",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "notes"
+                ],
+                "summary": "Create Notes",
+                "parameters": [
+                    {
+                        "description": "body request",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.NotesRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.NotesResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/notes/{id}": {
+            "get": {
+                "description": "TODO",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "notes"
+                ],
+                "summary": "Get Notes Detail",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "id notes",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.NotesResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "TODO",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "notes"
+                ],
+                "summary": "Update Notes",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "id notes",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.NotesResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/registrasi": {
             "post": {
                 "description": "TODO",
@@ -70,7 +222,7 @@ var doc = `{
                 "tags": [
                     "registrasi"
                 ],
-                "summary": "CreateUser User",
+                "summary": "Create User",
                 "parameters": [
                     {
                         "description": "body request",
@@ -147,6 +299,48 @@ var doc = `{
                     "type": "string"
                 },
                 "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.NotesRequest": {
+            "type": "object",
+            "required": [
+                "body",
+                "title",
+                "type"
+            ],
+            "properties": {
+                "body": {
+                    "type": "string"
+                },
+                "secret": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.NotesResponse": {
+            "type": "object",
+            "properties": {
+                "body": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "secret": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "type": {
                     "type": "string"
                 }
             }
