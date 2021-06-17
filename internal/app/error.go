@@ -17,6 +17,7 @@ const (
 	UnauthenticatedCode
 	UnauthorizedCode
 	NotFoundCode
+	InvalidCode
 )
 
 func (e errorCode) Int() int {
@@ -25,7 +26,7 @@ func (e errorCode) Int() int {
 
 func (e errorCode) String() string {
 	return [...]string{"Internal Server Error", "Data already exists",
-		"Unauthenticated", "Unauthorized", "Data Not Found"}[e-1]
+		"Unauthenticated", "Unauthorized", "Data Not Found", "Invalid data"}[e-1]
 }
 
 var (
@@ -48,5 +49,9 @@ var (
 	NotFoundError = Error{
 		Code:    NotFoundCode.Int(),
 		Message: NotFoundCode.String(),
+	}
+	InvalidCodeError = Error{
+		Code:    InvalidCode.Int(),
+		Message: InvalidCode.String(),
 	}
 )

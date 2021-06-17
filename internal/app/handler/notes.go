@@ -2,7 +2,6 @@ package handler
 
 import (
 	"github.com/labstack/echo/v4"
-	"net/http"
 	"refactory/notes/internal/app"
 	"refactory/notes/internal/app/model"
 	"refactory/notes/internal/app/service"
@@ -57,7 +56,7 @@ func (n *notesHandler) ListNotes(c echo.Context) error {
 		web.ResponseError(c, app.InternalError)
 	}
 
-	result, err := n.s.GetNotes(c.Request().Context(), session.UserId)
+	result, err := n.s.GetNotes(c.Request().Context(), session.UserId, session.RoleId)
 	if nil != err {
 		return web.ResponseError(c, err)
 	}
@@ -76,7 +75,7 @@ func (n *notesHandler) GetNotes(c echo.Context) error {
 		web.ResponseError(c, app.InternalError)
 	}
 
-	result, err := n.s.DetailNotes(c.Request().Context(), session.UserId, id)
+	result, err := n.s.DetailNotes(c.Request().Context(), session.UserId, id, session.RoleId)
 	if nil != err {
 		return web.ResponseError(c, err)
 	}
@@ -129,5 +128,14 @@ func (n *notesHandler) DeleteNotes(c echo.Context) error {
 }
 
 func (n *notesHandler) ReActiveNotes(c echo.Context) error {
-	return c.JSON(http.StatusOK, "OK")
+	id, err := strconv.Atoi(c.Param("id"))
+	if nil != err {
+		return echo.ErrBadRequest
+	}
+
+	if err := n.s.ReActiveNotes(c.Request().Context(), id); nil != err {
+		return web.ResponseError(c, err)
+	}
+
+	return web.Response(c, "Notes has active")
 }

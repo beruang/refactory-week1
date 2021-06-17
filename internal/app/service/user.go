@@ -124,7 +124,7 @@ func (a *userService) VerifyCode(ctx context.Context, session token.Token, code 
 	}
 
 	if sess.Code != code {
-		return app.UnauthenticateError
+		return app.InvalidCodeError
 	}
 
 	if err := a.repo.VerifyUser(ctx, session.Username); nil != err {

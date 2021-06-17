@@ -11,10 +11,11 @@ import (
 
 type NotesService interface {
 	CreateNotes(ctx context.Context, notes *model.Notes) (*model.NotesResponse, error)
-	GetNotes(ctx context.Context, userId int) ([]*model.NotesResponse, error)
-	DetailNotes(ctx context.Context, userId int, id int) (*model.NotesResponse, error)
+	GetNotes(ctx context.Context, userId int, roleId int) ([]*model.NotesResponse, error)
+	DetailNotes(ctx context.Context, userId int, id int, roleId int) (*model.NotesResponse, error)
 	EditNotes(ctx context.Context, notes *model.Notes) (*model.NotesResponse, error)
 	DeleteNotes(ctx context.Context, userId int, id int) error
+	ReActiveNotes(ctx context.Context, id int) error
 }
 
 type notesService struct {
@@ -36,9 +37,9 @@ func (n *notesService) CreateNotes(ctx context.Context, notes *model.Notes) (*mo
 	return model.NewNotesResponse(notes.Id, notes.Type, notes.Title, notes.Body, notes.Secret), nil
 }
 
-func (n *notesService) GetNotes(ctx context.Context, userId int) ([]*model.NotesResponse, error) {
+func (n *notesService) GetNotes(ctx context.Context, userId int, roleId int) ([]*model.NotesResponse, error) {
 	var responses []*model.NotesResponse
-	result, err := n.repo.GetNotes(ctx, userId)
+	result, err := n.repo.GetNotes(ctx, userId, roleId)
 	if nil != err {
 		return nil, err
 	}
@@ -54,8 +55,8 @@ func (n *notesService) GetNotes(ctx context.Context, userId int) ([]*model.Notes
 	return responses, nil
 }
 
-func (n *notesService) DetailNotes(ctx context.Context, userId int, id int) (*model.NotesResponse, error) {
-	result, err := n.repo.DetailNotes(ctx, userId, id)
+func (n *notesService) DetailNotes(ctx context.Context, userId int, id int, roleId int) (*model.NotesResponse, error) {
+	result, err := n.repo.DetailNotes(ctx, userId, id, roleId)
 	if nil != err {
 		return nil, err
 	}
@@ -72,9 +73,9 @@ func (n *notesService) EditNotes(ctx context.Context, notes *model.Notes) (*mode
 }
 
 func (n *notesService) DeleteNotes(ctx context.Context, userId int, id int) error {
-	if err := n.repo.DeleteNotes(ctx, userId, id); nil != err {
-		return err
-	}
+	return n.repo.DeleteNotes(ctx, userId, id)
+}
 
-	return nil
+func (n *notesService) ReActiveNotes(ctx context.Context, id int) error {
+	return n.repo.ReActiveNotes(ctx, id)
 }
