@@ -9,6 +9,7 @@ import (
 	"refactory/notes/internal/app"
 	"refactory/notes/internal/app/model"
 	"refactory/notes/internal/app/repository"
+	"refactory/notes/internal/config"
 	"refactory/notes/internal/mail"
 	"refactory/notes/internal/security/token"
 )
@@ -17,6 +18,11 @@ type UserService interface {
 	CreateUser(ctx context.Context, req model.UserRequest) (*model.UserResponse, error)
 	Login(ctx context.Context, username, password string) (*model.LoginResponse, error)
 	VerifyCode(ctx context.Context, session token.Token, code int) error
+	ListUser(ctx context.Context) ([]*model.UserResponse, error)
+	DetailUser(ctx context.Context, Id int) (*model.UserResponse, error)
+	UpdateUser(ctx context.Context, user *model.User) (*model.UserResponse, error)
+	DeleteUser(ctx context.Context, id int) error
+	ActiveUser(ctx context.Context, id int) error
 }
 
 type role int
@@ -50,7 +56,7 @@ func (a *userService) CreateUser(ctx context.Context, req model.UserRequest) (*m
 		return nil, err
 	}
 
-	u := model.NewUser(req.FirstName, req.LastName, req.Email, req.Username, string(pass), "", UserRole.Int())
+	u := model.NewUser(0, req.FirstName, req.LastName, req.Email, req.Username, string(pass), "", UserRole.Int())
 
 	session := model.Session{
 		UserId:     u.Id,
@@ -132,4 +138,69 @@ func (a *userService) VerifyCode(ctx context.Context, session token.Token, code 
 	}
 
 	return nil
+}
+
+func (a *userService) ListUser(ctx context.Context) ([]*model.UserResponse, error) {
+	var response []*model.UserResponse
+	result, err := a.repo.ListUser(ctx)
+	if nil != err {
+		return nil, err
+	}
+
+	for _, r := range result {
+		u := model.NewUserResponse(r.Id, r.FirstName, r.LastName, r.Email, r.Username, r.Password, fmt.Sprintf("%s/api/media/%d", config.Cfg().WebAddress, r.MediaId), "", "")
+		switch r.Role {
+		case UserRole.Int():
+			u.Role = UserRole.String()
+		case AdminRole.Int():
+			u.Role = AdminRole.String()
+		}
+		response = append(response, u)
+	}
+
+	return response, nil
+}
+
+func (a *userService) DetailUser(ctx context.Context, Id int) (*model.UserResponse, error) {
+	result, err := a.repo.DetailUser(ctx, Id)
+	if nil != err {
+		return nil, err
+	}
+
+	u := model.NewUserResponse(result.Id, result.FirstName, result.LastName, result.Email, result.Username, result.Password, fmt.Sprintf("%s/api/media/%d", config.Cfg().WebAddress, result.MediaId), "", "")
+	switch result.Role {
+	case UserRole.Int():
+		u.Role = UserRole.String()
+	case AdminRole.Int():
+		u.Role = AdminRole.String()
+	}
+
+	return u, nil
+}
+
+func (a *userService) UpdateUser(ctx context.Context, user *model.User) (*model.UserResponse, error) {
+	if err := a.repo.UpdateUser(ctx, user); nil != err {
+		return nil, err
+	}
+
+	u := model.NewUserResponse(user.Id, user.FirstName, user.LastName, user.Email, user.Username, user.Password, fmt.Sprintf("%s/api/media/%d", config.Cfg().WebAddress, user.MediaId), "", "")
+	switch user.Role {
+	case UserRole.Int():
+		u.Role = UserRole.String()
+	case AdminRole.Int():
+		u.Role = AdminRole.String()
+	}
+
+	return u, nil
+}
+
+func (a *userService) DeleteUser(ctx context.Context, id int) error {
+	if err := a.repo.DeleteUser(ctx, id); nil != err {
+		return err
+	}
+	return nil
+}
+
+func (a *userService) ActiveUser(ctx context.Context, id int) error {
+	return a.repo.ActiveUser(ctx, id)
 }

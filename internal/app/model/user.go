@@ -8,13 +8,14 @@ type User struct {
 	Username   string
 	Password   string
 	Photo      string
+	MediaId    int
 	Role       int
 	IsVerified bool
 	IsActive   bool
 }
 
-func NewUser(firstName string, lastName string, email string, username string, password string, photo string, role int) *User {
-	return &User{FirstName: firstName, LastName: lastName, Email: email, Username: username, Password: password, Photo: photo, Role: role}
+func NewUser(id int, firstName string, lastName string, email string, username string, password string, photo string, role int) *User {
+	return &User{Id: id, FirstName: firstName, LastName: lastName, Email: email, Username: username, Password: password, Photo: photo, Role: role}
 }
 
 type UserRequest struct {
@@ -35,7 +36,7 @@ type UserResponse struct {
 	Password  string `json:"password"`
 	Photo     string `json:"photo"`
 	Role      string `json:"role"`
-	Token     string `json:"token"`
+	Token     string `json:"token,omitempty"`
 }
 
 func NewUserResponse(id int, firstName string, lastName string, email string, username string, password string, photo string, role string, token string) *UserResponse {

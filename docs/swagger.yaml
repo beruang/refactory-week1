@@ -115,6 +115,21 @@ paths:
       summary: ReActive Notes
       tags:
       - admin
+  /admin/users/{id}:
+    put:
+      consumes:
+      - application/json
+      description: TODO
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      summary: Active User
+      tags:
+      - admin
   /login:
     post:
       consumes:
@@ -212,6 +227,26 @@ paths:
       tags:
       - notes
   /notes/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: TODO
+      parameters:
+      - description: id notes
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      summary: Update Notes
+      tags:
+      - notes
     get:
       consumes:
       - application/json
@@ -274,6 +309,75 @@ paths:
       summary: Create User
       tags:
       - registrasi
+  /users:
+    get:
+      consumes:
+      - application/json
+      description: TODO
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.UserResponse'
+            type: array
+      summary: List User
+      tags:
+      - users
+  /users/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: TODO
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      summary: Delete User
+      tags:
+      - users
+    get:
+      consumes:
+      - application/json
+      description: TODO
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.UserResponse'
+      summary: Detail User
+      tags:
+      - users
+    put:
+      consumes:
+      - application/json
+      description: TODO
+      parameters:
+      - description: body request
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/model.UserRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.UserResponse'
+            type: array
+      summary: Update User
+      tags:
+      - users
   /verification:
     post:
       consumes:

@@ -21,10 +21,13 @@ type handlerModule struct {
 	media handler.MediaHandler
 }
 
-// @title Go Blog API
+// @title RSP Notes API
 // @version 1.0
-// @description Implementing back-end services for blog application
-// @BasePath /v1
+// @description Implementing back-end services for RSP Notes application
+// @BasePath /api
+// @securityDefinitions.apiKey ApiKeyAuth
+// @in header
+// @name Authorization
 func NewRouter(validate *validator.Validate, db *sqlx.DB, cache redis.Client, enforcer *casbin.Enforcer) *echo.Echo {
 	authenticationMiddleware := middleware.NewAuthorization(enforcer)
 	e := echo.New()
@@ -37,6 +40,12 @@ func NewRouter(validate *validator.Validate, db *sqlx.DB, cache redis.Client, en
 	api.POST("/verification", module.user.VerifyCode, middleware.Claim(), middleware.Auth)
 	api.POST("/login", module.user.Login)
 
+	user := api.Group("/users", middleware.Claim(), middleware.Auth, authenticationMiddleware.Enforce())
+	user.GET("", module.user.ListUser)
+	user.GET("/:id", module.user.DetailUser)
+	user.PUT("/:id", module.user.EditUser)
+	user.DELETE("/:id", module.user.DeleteUser)
+
 	notes := api.Group("/notes", middleware.Claim(), middleware.Auth, authenticationMiddleware.Enforce())
 	notes.POST("", module.notes.CreateNotes)
 	notes.GET("", module.notes.ListNotes)
@@ -44,12 +53,13 @@ func NewRouter(validate *validator.Validate, db *sqlx.DB, cache redis.Client, en
 	notes.PUT("/:id", module.notes.EditNotes)
 	notes.DELETE("/:id", module.notes.DeleteNotes)
 
-	media := api.Group("/media", middleware.Claim(), middleware.Auth)
-	media.POST("", module.media.UploadMedia, middleware2.BodyLimit("10M"))
+	media := api.Group("/media")
+	media.POST("", module.media.UploadMedia, middleware2.BodyLimit("10M"), middleware.Claim(), middleware.Auth)
 	media.GET("/:id", module.media.DownloadMedia)
 
 	admin := api.Group("/admin", middleware.Claim(), middleware.Auth, authenticationMiddleware.Enforce())
 	admin.PUT("/notes/:id", module.notes.ReActiveNotes)
+	admin.PUT("/users/:id", module.user.ActiveUser)
 
 	api.GET("/swagger/*", echoSwagger.WrapHandler)
 

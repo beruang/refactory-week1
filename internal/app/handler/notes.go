@@ -140,7 +140,7 @@ func (n *notesHandler) EditNotes(c echo.Context) error {
 	return web.Response(c, response)
 }
 
-// @Router /notes/{id} [del]
+// @Router /notes/{id} [delete]
 // @Tags notes
 // @Summary Update Notes
 // @Description TODO
